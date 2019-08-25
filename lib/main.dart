@@ -7,6 +7,7 @@ import 'package:minigames/playerClasses.dart';
 //Screens
 import 'package:minigames/OpeningScreen.dart';
 import 'package:minigames/WelcomeScreen.dart';
+import 'package:minigames/OfferScreen.dart';
 
 void main() => runApp(
     ChangeNotifierProvider(builder: (context) => GameState(), child: MyApp()));
@@ -33,6 +34,7 @@ class MyApp extends StatelessWidget {
         routes: {
           '/': (context) => StartingPage(),
           '/welcome': (context) => WelcomePage(),
+          '/welcome/offer': (context) => OfferPage(),
         });
   }
 }
