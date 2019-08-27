@@ -40,6 +40,7 @@ class WelcomePageBody extends StatelessWidget {
                 onPressed: () {
                   Nearby().askLocationPermission();
                   print("Offer pressed");
+                  Provider.of<GameState>(context).selfPlayer.isHost = true;
                   Navigator.pushNamedAndRemoveUntil(
                       context, '/welcome/offer', (_) => false);
                 },
@@ -54,6 +55,8 @@ class WelcomePageBody extends StatelessWidget {
                 onPressed: () {
                   Nearby().askLocationPermission();
                   print("Join pressed");
+                  Navigator.pushNamedAndRemoveUntil(
+                      context, '/welcome/join', (_) => false);
                 },
               ),
             )

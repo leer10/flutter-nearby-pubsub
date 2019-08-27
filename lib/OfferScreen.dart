@@ -35,6 +35,7 @@ class _searchButton extends StatelessWidget {
               onConnectionInitiated: (String id,ConnectionInfo info) {
               // Called whenever a discoverer requests connection
               print("$id found with ${info.endpointName}");
+              connectionRequestPrompt(id, info, context);
               },
               onConnectionResult: (String id,Status status) {
               // Called when connection is accepted/rejected
@@ -43,6 +44,7 @@ class _searchButton extends StatelessWidget {
               // Callled whenever a discoverer disconnects from advertiser
               },
           );
+          //print("start advertising");
           Provider.of<OffersState>(context).searchingChange(true);
       } catch (exception) {
           // platform exceptions like unable to start bluetooth or
@@ -103,16 +105,57 @@ class _OfferPageBodyState extends State<OfferPageBody> {
           padding: const EdgeInsets.all(8.0),
           child: Text("Not searching", textAlign: TextAlign.center),
         ),
-      Divider()]
+      Divider()],
+      Expanded(
+        child: ListView.builder(
+          itemCount: Provider.of<GameState>(context).PlayerList.length,
+          itemBuilder: (BuildContext context, int index) {
+            return ListTile(
+              title: Text(Provider.of<GameState>(context).PlayerList[index].fancyName),
+              subtitle: Text(Provider.of<GameState>(context).PlayerList[index].deviceID),
+            );
+          }
+        ),
+      )
         ]
       ),
     );
   }
 }
 
-void playerWantsToJoin(String id, ConnectionInfo info, BuildContext context) {
+void connectionRequestPrompt(String id, ConnectionInfo info, BuildContext context) {
   showModalBottomSheet(
     context: context,
-    builder:
+    builder: (builder) {
+      return Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+           Text("${info.endpointName} wants in!", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+         Row(
+           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+           children:[
+             RaisedButton(color: Colors.red, child: Text("REJECT"), onPressed: () async {
+               Navigator.pop(context);
+               try {
+                      await Nearby().rejectConnection(id);
+                    } catch (exception) {
+                      print(exception);
+                    }}),
+            RaisedButton(color: Colors.green, child: Text("ACCEPT"), onPressed: () {
+              Provider.of<GameState>(context).addPlayer(deviceID: id, fancyName: info.endpointName, isHost: false);
+                    Navigator.pop(context);
+                    Nearby().acceptConnection(
+                      id,
+                      onPayLoadRecieved: (endid, payload) {
+                        print(endid + ": " + String.fromCharCodes(payload.bytes));
+                      },
+                    );
+            }),
+           ]
+         )]),
+      );
+    }
   );
 }

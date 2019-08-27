@@ -8,6 +8,8 @@ import 'package:minigames/playerClasses.dart';
 import 'package:minigames/OpeningScreen.dart';
 import 'package:minigames/WelcomeScreen.dart';
 import 'package:minigames/OfferScreen.dart';
+import 'package:minigames/JoinScreen.dart';
+import 'package:minigames/LobbyScreen.dart';
 
 void main() => runApp(
     ChangeNotifierProvider(builder: (context) => GameState(), child: MyApp()));
@@ -35,6 +37,8 @@ class MyApp extends StatelessWidget {
           '/': (context) => StartingPage(),
           '/welcome': (context) => WelcomePage(),
           '/welcome/offer': (context) => OfferPage(),
+          '/welcome/join': (context) => JoinPage(),
+          '/lobby': (context) => LobbyPage(),
         });
   }
 }
@@ -44,6 +48,11 @@ class GameState with ChangeNotifier {
   Player selfPlayer;
 
   void addSelf(String name) {
-    selfPlayer = Player(fancyName: name, isSelf: true);
+    selfPlayer = Player(fancyName: name, isSelf: true, deviceID: "This Device");
+    PlayerList.add(selfPlayer);
+  }
+  void addPlayer({@required fancyName, @required deviceID, isHost}){
+    PlayerList.add(Player(fancyName: fancyName, deviceID: deviceID, isHost: isHost));
+    notifyListeners();
   }
 }
