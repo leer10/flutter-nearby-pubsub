@@ -39,7 +39,7 @@ class NearbyStream {
   }
 //   Nearby().sendPayload(cId, Uint8List.fromList(a.codeUnits));
   NearbyStream._internal(this.id){
-this._outcontroller.stream.forEach((data) => Nearby().sendPayload(id, Uint8List.fromList(data)));
+this._outcontroller.stream.forEach((data) => Nearby().sendBytesPayload(id, Uint8List.fromList(data)));
   }
 
   Stream<Uint8List> get stream => _incontroller.stream;
