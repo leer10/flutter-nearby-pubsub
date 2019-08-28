@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:pub_sub/pub_sub.dart';
+import 'package:pub_sub/json_rpc_2.dart';
+import 'dart:async';
+import 'package:stream_channel/stream_channel.dart';
+
 
 //Classes
 import 'package:minigames/playerClasses.dart';
@@ -48,11 +52,13 @@ class GameState with ChangeNotifier {
   List<Player> PlayerList = [];
   Player selfPlayer;
   Server server;
+  StreamController<Stream<String>> incomingStreams;
 
 
   void addSelf(String name) {
     selfPlayer = Player(fancyName: name, isSelf: true, deviceID: "This Device");
     PlayerList.add(selfPlayer);
+
   }
   void addPlayer({@required fancyName, @required deviceID, isHost}){
     PlayerList.add(Player(fancyName: fancyName, deviceID: deviceID, isHost: isHost));
@@ -60,6 +66,6 @@ class GameState with ChangeNotifier {
   }
 
   void initalizeServer() {
-
+    JsonRpc2Adapter adapter = JsonRpc2Adapter(incomingStreams.stream)
   }
 }
