@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:pub_sub/pub_sub.dart';
 
 //Classes
 import 'package:minigames/playerClasses.dart';
@@ -46,6 +47,8 @@ class MyApp extends StatelessWidget {
 class GameState with ChangeNotifier {
   List<Player> PlayerList = [];
   Player selfPlayer;
+  Server server;
+
 
   void addSelf(String name) {
     selfPlayer = Player(fancyName: name, isSelf: true, deviceID: "This Device");
@@ -54,5 +57,9 @@ class GameState with ChangeNotifier {
   void addPlayer({@required fancyName, @required deviceID, isHost}){
     PlayerList.add(Player(fancyName: fancyName, deviceID: deviceID, isHost: isHost));
     notifyListeners();
+  }
+
+  void initalizeServer() {
+
   }
 }
