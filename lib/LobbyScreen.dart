@@ -32,14 +32,60 @@ isSubbed = true;} else {print("already subbed!");}});
             }
           ),
           RaisedButton(
-            child: Text("emit"),
+            child: Text("emit a Hello World"),
             onPressed: (){
               Provider.of<GameState>(context).client.publish("greeting", "Hello World");
             }
           ),
+          MessageForm(),
         ],
       )
     );
   }
 
+}
+
+class MessageForm extends StatefulWidget{
+  @override
+  _MessageFormState createState() => _MessageFormState();
+}
+
+class _MessageFormState extends State<MessageForm> {
+  final myController = TextEditingController();
+
+  @override
+  void dispose(){
+myController.dispose();
+super.dispose();
+}
+
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    return Row(
+      children: <Widget>[
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              controller: myController,
+              textCapitalization: TextCapitalization.sentences,
+              decoration: InputDecoration(
+                hintText: "Enter a greeting"
+              )
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: IconButton(
+            icon: Icon(Icons.send),
+            onPressed: (){
+              Provider.of<GameState>(context).client.publish("greeting", myController.text);
+            }
+          ),
+        )
+      ],
+    );
+  }
 }
