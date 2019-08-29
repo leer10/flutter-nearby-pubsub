@@ -10,6 +10,7 @@ I really wanted to work with Protobuf but I didn't wanna write too much by hand 
  * What happens when one of the devices loses connection is untested. However thanks to Nearby the connection does seem to survive a device's sleep button being touched.
  * pub_sub really prefers clients authenticate using IDs. It is possible to have the connecting devices send a generated ID and then when the pub_sub server is started, whitelist those IDs. However given only physically close devices can connect, I have no qualms trusting all clients with null IDs.
  * When publishing an event, the publishing device will not get its own event even if subscribed. Probably intentional to prevent doubled actions, but please keep it in mind.
+ * Nearby doesn't react to hot-restart to my knowledge so when I was testing adding devices, I had to exit flutter and run "flutter run -d all" again.
  
 ## If you use this
 
