@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:minigames/main.dart';
+import 'package:minigames/NearbyClasses.dart';
 import 'package:nearby_connections/nearby_connections.dart';
 
 class OfferPage extends StatelessWidget {
@@ -14,6 +15,12 @@ class OfferPage extends StatelessWidget {
             actions: <Widget>[
               _searchButton(),
               _stopButton(),
+              IconButton(
+                icon: Icon(Icons.arrow_forward),
+                onPressed: (){
+                  Navigator.pushNamed(context, '/lobby');
+                }
+              )
             ],
           ),
           body: OfferPageBody()),
@@ -150,8 +157,11 @@ void connectionRequestPrompt(String id, ConnectionInfo info, BuildContext contex
                       id,
                       onPayLoadRecieved: (endid, payload) {
                         print(endid + ": " + String.fromCharCodes(payload.bytes));
+                        NearbyStream(endid).receive(payload.bytes);
+
                       },
                     );
+                    Provider.of<GameState>(context).connectWithClient(id);
             }),
            ]
          )]),

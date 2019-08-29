@@ -41,6 +41,7 @@ class WelcomePageBody extends StatelessWidget {
                   Nearby().askLocationPermission();
                   print("Offer pressed");
                   Provider.of<GameState>(context).selfPlayer.isHost = true;
+                  Provider.of<GameState>(context).initalizeServer();
                   Navigator.pushNamedAndRemoveUntil(
                       context, '/welcome/offer', (_) => false);
                 },

@@ -4,6 +4,7 @@ import 'package:pub_sub/pub_sub.dart';
 import 'package:pub_sub/json_rpc_2.dart';
 import 'dart:async';
 import 'package:stream_channel/stream_channel.dart';
+import 'package:minigames/NearbyClasses.dart';
 
 
 //Classes
@@ -51,8 +52,17 @@ class MyApp extends StatelessWidget {
 class GameState with ChangeNotifier {
   List<Player> PlayerList = [];
   Player selfPlayer;
+  // For server
+  bool isServerInitalized = false;
   Server server;
-  StreamController<Stream<String>> incomingStreams;
+  StreamController<StreamChannel<String>> controller;
+  Stream<StreamChannel<String>> incomingConnections;
+  JsonRpc2Adapter adapter;
+
+  // For client
+  bool isClientInitalized = false;
+  JsonRpc2Client client;
+
 
 
   void addSelf(String name) {
@@ -66,6 +76,34 @@ class GameState with ChangeNotifier {
   }
 
   void initalizeServer() {
-    JsonRpc2Adapter adapter = JsonRpc2Adapter(incomingStreams.stream)
+    if (!isServerInitalized) {
+    print("Initalizing server");
+    controller = StreamController<StreamChannel<String>>();
+    incomingConnections = controller.stream;
+    adapter = JsonRpc2Adapter(incomingConnections, isTrusted: true);
+    server = Server([adapter])
+    ..start();
+    connectWithSelf();
+  isServerInitalized = true;} else {print("server already initalized!");}
+  }
+
+  void connectWithClient(String id){
+    StreamChannel<String> clientChannel = StreamChannel(NearbyStream(id).stream, NearbyStream(id).sink);
+    controller.add(clientChannel);
+    print("added client $id");
+  }
+
+  void connectWithSelf(){
+    LoopbackStream loopbackStream = LoopbackStream();
+    StreamChannel<String> localClientChannel = StreamChannel(loopbackStream.clientStream, loopbackStream.clientSink);
+    StreamChannel<String> localServerChannel = StreamChannel(loopbackStream.serverStream, loopbackStream.serverSink);
+    client = JsonRpc2Client(null, localClientChannel);
+    controller.add(localServerChannel);
+    print("added self");
+  }
+
+  void connectWithServer(String id){
+    StreamChannel<String> serverChannel = StreamChannel(NearbyStream(id).stream, NearbyStream(id).sink);
+    client = JsonRpc2Client(null, serverChannel);
   }
 }
